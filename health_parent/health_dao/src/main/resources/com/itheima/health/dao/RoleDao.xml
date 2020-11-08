@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace属性：名称空间， 写接口的全限定名-->
+<mapper namespace="com.itheima.health.dao.RoleDao">
+    <insert id="add" parameterType="Role" keyProperty="id" useGeneratedKeys="true">
+        insert into t_role (name,keyword,description)
+        values (#{name},#{keyword},#{description})
+    </insert>
+
+    <insert id="addRolePermission" parameterType="int">
+        insert into t_rolet_permission (role_id,permission_id)
+        values(#{roleId},#{permissionId})
+    </insert>
+
+    <select id="findByCondition" parameterType="String" resultType="Role">
+        select * from t_role
+        <if test="value != null and value.length > 0">
+            where description like #{queryString} or name like #{queryString} or keyword like #{queryString}
+        </if>
+    </select>
+
+    <select id="findById" parameterType="int" resultType="Role">
+        select * from t_role where id=#{id}
+    </select>
+
+    <select id="findPermissionIdsByRoleId" parameterType="int" resultType="int">
+        select permission_id from t_role_permission where role_id=#{id}
+    </select>
+
+    <update id="update" parameterType="role" >
+        update t_role
+        set
+            name=#{name},
+            keyword=#{keyword},
+            description=#{description}
+        where id=#{id}
+    </update>
+
+    <delete id="deleteRolePermission" parameterType="int">
+        delete from t_role_permission where role_id=#{id}
+    </delete>
+
+    <select id="findCountByRoleId" parameterType="int" resultType="int">
+        select count(1) from t_role_menu where role_id=#{id}
+    </select>
+    <delete id="deleteById" parameterType="int">
+        delete from t_role where id=#{id}
+    </delete>
+
+    <select id="findAll" resultType="role">
+        select * from t_role
+    </select>
+
+    <resultMap type="com.itheima.health.pojo.Role" id="findByIdResultMap">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="keyword" property="keyword"/>
+        <result column="description" property="description"/>
+        <collection property="permission" column="id"
+                    select="com.itheima.health.dao.PermissionDao.findPermissionListById">
+        </collection>
+    </resultMap>
+    <select id="findRoleListById" resultMap="findByIdResultMap">
+        select * from t_role  where id
+        in (select roel_id from t_role_menu where menu_id=#{id})
+    </select>
+
+    <!--select标签用于插叙；  id属性值就是接口的方法名，
+        resultType ：返回值的类型
+                    如果是集合，写泛型即可；
+    -->
+</mapper>
