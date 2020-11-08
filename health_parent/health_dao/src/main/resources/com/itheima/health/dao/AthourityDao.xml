@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.health.dao.AthourityDao">
+     <select id="findAll" resultType="com.itheima.health.pojo.Permission">
+          select * from t_permission
+     </select>
+     <select id="findPage" resultType="com.itheima.health.pojo.Permission">
+     select * from t_permission
+     <where>
+          <if test="value !=null and value !=''">
+              name like #{s} or keyword like #{s}
+          </if>
+     </where>
+</select>
+
+     <insert id="addAthourity">
+          insert into t_permission (id,name,keyword,description) values (null ,#{name},#{keyword},#{description})
+     </insert>
+
+     <select id="findById" resultType="com.itheima.health.pojo.Permission">
+          select * from t_permission where id=#{id}
+     </select>
+
+     <update id="update">
+          update  t_permission set name=#{name},keyword=#{keyword},description=#{description} where id=#{id}
+     </update>
+     <select id="qureyById" resultType="java.lang.Integer">
+          select  count(1) from t_role_permission where permission_id=#{id}
+     </select>
+
+     <delete id="deleteById">
+         delete from t_permission where id=#{id}
+     </delete>
+</mapper>
