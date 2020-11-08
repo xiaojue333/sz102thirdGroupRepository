@@ -47,4 +47,9 @@ public interface OrderSettingDao {
      * @return
      */
     int editReservationsByOrderDate(OrderSetting orderSetting);
+
+    /*
+     * 删除指定日期以前的数据
+     * */
+    void cleanOrdersetting(String cleanTime);
 }
