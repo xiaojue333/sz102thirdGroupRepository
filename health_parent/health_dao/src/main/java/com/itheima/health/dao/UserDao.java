@@ -1,7 +1,11 @@
 package com.itheima.health.dao;
 
 import com.github.pagehelper.Page;
+import com.itheima.health.pojo.Menu;
 import com.itheima.health.pojo.User;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -55,9 +59,16 @@ public interface UserDao {
 
     /**
      * 修改用户信息
-     * @param id
+     * @param user
      */
     void update(User user);
 
     User findById(int id);
+
+    /**
+     * 根据用户名查询主菜单
+     * @param username
+     * @return
+     */
+    List<Menu> getMainMenuList(@Param("name") String username);
 }

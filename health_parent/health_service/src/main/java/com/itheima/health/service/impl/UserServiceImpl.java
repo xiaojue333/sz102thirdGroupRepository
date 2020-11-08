@@ -8,9 +8,13 @@ import com.itheima.health.dao.UserDao;
 import com.itheima.health.entity.PageResult;
 import com.itheima.health.entity.QueryPageBean;
 import com.itheima.health.exception.MyException;
+import com.itheima.health.pojo.Menu;
 import com.itheima.health.pojo.User;
 import com.itheima.health.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -89,6 +93,38 @@ public class UserServiceImpl implements UserService {
     @Override
     public void add(User user) {
         userDao.add(user);
+    }
 
+    /**
+     * 根据用户名去查询用户权限菜单集合
+     *
+     * @param username
+     * @return
+     */
+    @Override
+    public List<Menu> getMenuList(String username) {
+
+        //查询主菜单
+        List<Menu> MainMenuList = userDao.getMainMenuList(username);
+        //结果集合
+        List<Menu> resultMenuList = new ArrayList<>();
+        //遍历所有菜单
+        for (Menu menu : MainMenuList) {
+            //判断是否是父菜单
+            if (menu.getParentMenuId() == null) {
+                //是 添加进集合
+                resultMenuList.add(menu);
+            }
+            //子菜单集合
+            List<Menu> secondMenuList = new ArrayList<>();
+            //循环添加子菜单
+            for (Menu menu1 : MainMenuList) {
+                if (menu1.getParentMenuId() != null && menu1.getParentMenuId() == menu.getId()) {
+                    secondMenuList.add(menu1);
+                }
+            }
+            menu.setChildren(secondMenuList);
+        }
+        return resultMenuList;
     }
 }

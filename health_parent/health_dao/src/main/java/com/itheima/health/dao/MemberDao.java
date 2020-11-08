@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.itheima.health.pojo.Member;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -37,4 +38,15 @@ public interface MemberDao {
     Integer findMemberCountAfterDate(String date);
     Integer findMemberTotalCount();
 
+    /**
+     * 分性别查询会员占比
+     * @return
+     */
+    List<Map<String, Object>> getSexBingTu();
+
+    /**
+     * 分年龄段查找会员数量 方案2
+     * @return
+     */
+    List<Map<String, Object>> getAgeBingTuFa2();
 }

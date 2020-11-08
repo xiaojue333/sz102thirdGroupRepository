@@ -45,6 +45,26 @@ public class ReportController {
     private ReportService reportService;
 
     /**
+     * 分年龄段查找会员数量 方案2
+     * @return
+     */
+    @GetMapping("/getAgeBingTuFa2")
+    public Result getAgeBingTuFa2(){
+        List<Map<String,Object>> ageBingTuFa2 = reportService.getAgeBingTuFa2();
+        return new Result(true,"年龄查询会员数成功",ageBingTuFa2);
+    }
+
+    /**
+     * 分性别查询会员占比
+     * @return
+     */
+    @GetMapping("/getSexBingTu")
+    public Result getSexBingTu(){
+        List<Map<String,Object>> list = reportService.getSexBingTu();
+        return new Result(true,"分性别查询会员占比成功",list);
+    }
+
+    /**
      * 会员数量拆线图
      * @return
      */

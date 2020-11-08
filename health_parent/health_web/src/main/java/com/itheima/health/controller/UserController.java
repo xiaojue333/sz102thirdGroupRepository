@@ -5,10 +5,13 @@ import com.itheima.health.constant.MessageConstant;
 import com.itheima.health.entity.PageResult;
 import com.itheima.health.entity.QueryPageBean;
 import com.itheima.health.entity.Result;
+import com.itheima.health.pojo.Menu;
 import com.itheima.health.pojo.User;
 import com.itheima.health.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 /**
@@ -77,5 +80,17 @@ public class UserController {
     public Result findById(int id){
         User user = userService.findById(id);
         return new Result(true,"回显数据成功",user);
+    }
+    /**
+     * 根据用户名去查询用户权限菜单集合
+     * @param username
+     * @return
+     */
+    @PostMapping("/getMenuList")
+    public Result getMenuList(String username) {
+        //调用业务层 根据用户名去查询用户权限菜单集合
+        List<Menu> menuList = userService.getMenuList(username);
+        //返回数据
+        return new Result(true,"获取数据成功！",menuList);
     }
 }

@@ -65,4 +65,13 @@
     <select id="findById" parameterType="int" resultType="com.itheima.health.pojo.User">
         select * from t_user where id = #{id}
     </select>
+
+    <select id="getMainMenuList" resultType="Menu" parameterType="string">
+        select  m.id,m.name,m.icon,m.path,m.parentMenuId,m.linkUrl
+            from t_menu as m left join t_role_menu as rm on m.id = rm.menu_id
+            left join t_role as r on r.id = rm.role_id
+            left join t_user_role as ur on ur.role_id = r.id
+            left join t_user as u on ur.user_id = u.id
+        where u.id = (select id from t_user where username = #{name})
+    </select>
 </mapper>

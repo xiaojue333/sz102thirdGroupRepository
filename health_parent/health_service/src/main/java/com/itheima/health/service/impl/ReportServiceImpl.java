@@ -8,10 +8,7 @@ import com.itheima.health.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -92,5 +89,42 @@ public class ReportServiceImpl implements ReportService {
         reportData.put("hotSetmeal",hotSetmeal);
 
         return reportData;
+    }
+
+    /**
+     * 分性别查询会员占比
+     *
+     * @return
+     */
+    @Override
+    public List<Map<String, Object>> getSexBingTu() {
+        List<Map<String, Object>> list = memberDao.getSexBingTu();
+        List<Map<String, Object>> resultList  = new ArrayList<>();
+        if (list != null) {
+            for (Map<String, Object> map : list) {
+                if ("1".equals(map.get("name"))) {
+                    Map<String, Object> mapResult = new HashMap<>();
+                    mapResult.put("name","男");
+                    mapResult.put("value",map.get("value"));
+                    resultList.add(mapResult);
+                } else if ("2".equals(map.get("name"))) {
+                    Map<String, Object> mapResult = new HashMap<>();
+                    mapResult.put("name","女");
+                    mapResult.put("value",map.get("value"));
+                    resultList.add(mapResult);
+                }
+            }
+        }
+        return resultList;
+    }
+
+    /**
+     * 分年龄段查找会员数量 方案2
+     * @return
+     */
+    @Override
+    public List<Map<String, Object>> getAgeBingTuFa2() {
+        List<Map<String,Object>> resultList = memberDao.getAgeBingTuFa2();
+        return resultList;
     }
 }

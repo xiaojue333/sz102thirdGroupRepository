@@ -63,4 +63,24 @@
         parentMenuId = #{parentMenuId},level = #{level} WHERE id = #{id}
     </update>
 
+    <!--分年龄段查找会员数量方案二-->
+    <select id="getAgeBingTuFa2" resultType="map">
+        SELECT nnd as name,count(*) as value from(
+        SELECT
+        CASE
+        WHEN (select TIMESTAMPDIFF(YEAR,birthday,DATE_FORMAT(NOW(), '%Y-%m-%d')) ) &gt;= 0
+        and (select TIMESTAMPDIFF(YEAR,birthday,DATE_FORMAT(NOW(), '%Y-%m-%d')) ) &lt;= 18 then '0-18岁'
+        WHEN (select TIMESTAMPDIFF(YEAR,birthday,DATE_FORMAT(NOW(), '%Y-%m-%d')) ) &gt;= 18
+        and (select TIMESTAMPDIFF(YEAR,birthday,DATE_FORMAT(NOW(), '%Y-%m-%d')) ) &lt;= 30 then '18-30岁'
+        WHEN (select TIMESTAMPDIFF(YEAR,birthday,DATE_FORMAT(NOW(), '%Y-%m-%d')) ) &gt;= 30
+        and (select TIMESTAMPDIFF(YEAR,birthday,DATE_FORMAT(NOW(), '%Y-%m-%d')) ) &lt;= 45 then '30-45岁'
+        WHEN (select TIMESTAMPDIFF(YEAR,birthday,DATE_FORMAT(NOW(), '%Y-%m-%d')) ) &gt;= 45 then '45岁以上'
+        END as nnd,sex
+        from t_member
+        ) a GROUP BY nnd;
+    </select>
+    <select id="getSexBingTu" resultType="map">
+        select sex as name,count(1) as value from t_member  group by sex
+    </select>
+
 </mapper>

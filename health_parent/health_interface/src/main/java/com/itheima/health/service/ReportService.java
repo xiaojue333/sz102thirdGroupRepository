@@ -1,5 +1,6 @@
 package com.itheima.health.service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,4 +18,16 @@ public interface ReportService {
      * @return
      */
     Map<String, Object> getBusinessReportData();
+
+    /**
+     * 分性别查询会员占比
+     * @return
+     */
+    List<Map<String, Object>> getSexBingTu();
+
+    /**
+     * 分年龄段查找会员数量 方案2
+     * @return
+     */
+    List<Map<String, Object>> getAgeBingTuFa2();
 }

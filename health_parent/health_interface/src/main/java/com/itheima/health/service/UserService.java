@@ -3,7 +3,10 @@ package com.itheima.health.service;
 import com.itheima.health.entity.PageResult;
 import com.itheima.health.entity.QueryPageBean;
 import com.itheima.health.exception.MyException;
+import com.itheima.health.pojo.Menu;
 import com.itheima.health.pojo.User;
+
+import java.util.List;
 
 /**
  * <p>
@@ -51,4 +54,11 @@ public interface UserService {
      * @return
      */
     User findById(int id);
+
+    /**
+     * 根据用户名去查询用户权限菜单集合
+     * @param username
+     * @return
+     */
+    List<Menu> getMenuList(String username);
 }
