@@ -89,4 +89,14 @@ public class OrderSettingServiceImpl implements OrderSettingService {
             orderSettingDao.add(orderSetting);
         }
     }
+
+
+    /*
+     * 删除指定日期以前的数据
+     * */
+    @Override
+    public void cleanOrdersetting(String cleanTime) {
+        //调用dao层
+        orderSettingDao.cleanOrdersetting(cleanTime);
+    }
 }

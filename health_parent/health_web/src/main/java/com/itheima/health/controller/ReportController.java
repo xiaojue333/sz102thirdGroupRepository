@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -80,6 +81,130 @@ public class ReportController {
         resultMap.put("months",months);
         resultMap.put("memberCount",memberCount);
         return new Result(true, MessageConstant.GET_MEMBER_NUMBER_REPORT_SUCCESS,resultMap);
+    }
+
+    /**
+     * 会员数量拆线图-根据用户输入数据查询
+     *
+     * @return
+     */
+    @GetMapping("/getMemberReportByDate")
+    public Result getMemberReportByDate(String dateFirst, String dateLate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+        Calendar car = Calendar.getInstance();
+        List<String> months = new ArrayList<String>();
+        //根据用户输入的数据 查询成员的数量
+        //假如两个都为空--->从今天往前推12个月
+        if (dateFirst.equals("null") && dateLate.equals("null")) {
+            return getMemberReport();
+        }
+        //填了两个--->这个时间段内的所有月份
+        if (!dateFirst.equals("null") && !dateLate.equals("null")) {
+            Date dateFirst1 = null;
+            Date dateLate1 = null;
+            try {
+                //格式化日期
+                dateFirst1 = sdf.parse(dateFirst);
+                dateLate1 = sdf.parse(dateLate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            int result = dateFirst1.compareTo(dateLate1);
+            //先判断哪个日期小
+            if (result < 0) {
+                //dateFirst1 比较小
+                //取小的日期放入日历类
+                String[] split = dateFirst.split("-");
+                Integer year = Integer.valueOf(split[0]);
+                Integer month = Integer.valueOf(split[1]);
+                car.set(Calendar.YEAR, year);
+                car.set(Calendar.MONTH, month-1);
+
+                while (true) {
+                    //判断现在的日期是否大于等于较大的日期
+                    int compareTo = car.getTime().compareTo(dateLate1);
+                    if (compareTo > 0) {
+                        break;
+                    }
+                    // +1个月
+                    car.add(Calendar.MONTH, 1);
+                    months.add(sdf.format(car.getTime()));
+                }
+
+            } else if (result > 0) {
+                //dateFirst1 比较小
+                //取小的日期放入日历类
+                String[] split = dateLate.split("-");
+                Integer year = Integer.valueOf(split[0]);
+                Integer month = Integer.valueOf(split[1]);
+                car.set(Calendar.YEAR, year);
+                car.set(Calendar.MONTH, month-1);
+
+
+                while (true) {
+                    //判断现在的日期是否大于等于较大的日期
+                    int compareTo = car.getTime().compareTo(dateFirst1);
+                    if (compareTo > 0) {
+                        break;
+                    }
+                    // +1个月
+                    car.add(Calendar.MONTH, 1);
+                    months.add(sdf.format(car.getTime()));
+                }
+
+            } else {
+                //两个日期相同
+                months.add(dateFirst.substring(0,7));
+            }
+            List<Integer> memberCount = memberService.getMemberReport(months);
+            Map<String, Object> resultMap = new HashMap<String, Object>();
+            resultMap.put("months", months);
+            resultMap.put("memberCount", memberCount);
+            return new Result(true, MessageConstant.GET_MEMBER_NUMBER_REPORT_SUCCESS, resultMap);
+        }
+
+        //假如填了一个--->从这个日期往前推12个月的数据
+        if (!dateFirst.equals("null")) {
+            String[] split = dateFirst.split("-");
+            Integer year = Integer.valueOf(split[0]);
+            Integer month = Integer.valueOf(split[1]);
+            car.set(Calendar.YEAR, year);
+            car.set(Calendar.MONTH, month-1);
+            // 过去一年, 年-1
+            car.add(Calendar.YEAR, -1);
+            // 遍历12次，依次加1个月
+            for (int i = 0; i < 12; i++) {
+                // +1个月
+                car.add(Calendar.MONTH, 1);
+                months.add(sdf.format(car.getTime()));
+            }
+            // 调用服务去查询12个月的数据
+            List<Integer> memberCount = memberService.getMemberReport(months);
+            Map<String, Object> resultMap = new HashMap<String, Object>();
+            resultMap.put("months", months);
+            resultMap.put("memberCount", memberCount);
+            return new Result(true, MessageConstant.GET_MEMBER_NUMBER_REPORT_SUCCESS, resultMap);
+
+        } else {
+            String[] split = dateLate.split("-");
+            Integer year = Integer.valueOf(split[0]);
+            Integer month = Integer.valueOf(split[1]);
+            car.set(Calendar.YEAR, year);
+            car.set(Calendar.MONTH, month-1);
+            // 过去一年, 年-1
+            car.add(Calendar.YEAR, -1);
+            // 遍历12次，依次加1个月
+            for (int i = 0; i < 12; i++) {
+                // +1个月
+                car.add(Calendar.MONTH, 1);
+                months.add(sdf.format(car.getTime()));
+            }
+            List<Integer> memberCount = memberService.getMemberReport(months);
+            Map<String, Object> resultMap = new HashMap<String, Object>();
+            resultMap.put("months", months);
+            resultMap.put("memberCount", memberCount);
+            return new Result(true, MessageConstant.GET_MEMBER_NUMBER_REPORT_SUCCESS, resultMap);
+        }
     }
 
     /**
