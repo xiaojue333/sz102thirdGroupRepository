@@ -32,4 +32,37 @@
             </collection>
         </collection>
     </resultMap>
+    <select id="add" parameterType="com.itheima.health.pojo.User">
+        insert into t_user(username,password,gender,birthday,telephone,station,remark)
+        values(#{username},#{password},#{gender},#{birthday},#{telephone},#{station},#{remark})
+    </select>
+
+    <select id="findByCondition" resultType="com.itheima.health.pojo.User" parameterType="String">
+        select * From t_user
+        <if test="value !=null and value.length > 0">
+            where id like #{value} or username like #{value}
+        </if>
+    </select>
+
+    <delete id="delete" parameterType="int">
+    delete from t_user where id=#{id}
+    </delete>
+
+    <select id="findByRole" parameterType="int" resultType="int">
+        select count(*) from t_user_role where user_id = #{id}
+    </select>
+
+    <delete id="deleteUserRole" parameterType="int">
+        delete from t_user_role where user_id=#{id}
+    </delete>
+
+    <update id="update" parameterType="com.itheima.health.pojo.User">
+        update t_user set
+        username=#{username},password=#{password},gender=#{gender},birthday=#{birthday},telephone=#{telephone},station=#{station},remark=#{remark}
+        where id = #{id}
+    </update>
+
+    <select id="findById" parameterType="int" resultType="com.itheima.health.pojo.User">
+        select * from t_user where id = #{id}
+    </select>
 </mapper>
