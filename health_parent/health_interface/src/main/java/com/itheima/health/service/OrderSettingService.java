@@ -33,4 +33,10 @@ public interface OrderSettingService {
      * @param os
      */
     void editNumberByDate(OrderSetting os) throws MyException;
+
+    /*
+    * 删除指定日期以前的数据
+    * */
+
+    void cleanOrdersetting(String cleanTime);
 }

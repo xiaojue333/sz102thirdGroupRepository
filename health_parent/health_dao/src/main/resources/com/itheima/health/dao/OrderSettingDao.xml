@@ -4,6 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.itheima.health.dao.OrderSettingDao">
+    <delete id="cleanOrdersetting">
+        delete from t_ordersetting where orderDate &lt; #{cleanTime}
+    </delete>
     <select id="findByOrderDate" parameterType="date" resultType="ordersetting">
         select * from t_ordersetting where orderDate=#{value}
     </select>
