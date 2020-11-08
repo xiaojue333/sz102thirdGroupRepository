@@ -31,10 +31,23 @@ public class SetmealMobileController {
      * 套餐列表
      * @return
      */
-    @GetMapping("/getSetmeal")
+     @GetMapping("/getSetmeal")
     public Result getSetmeal(){
         // 套餐列表
-        List<Setmeal> setmealList = setmealService.findAll();
+        //从工具类里获得jedis
+        Jedis jedis = JedisUtils.getConn();
+        //先从redis里获取数据(存储json格式串到redis),redis里没有在从Mysql里查
+        String setmeal = jedis.get("setmealList");
+        List<Setmeal> setmealList = null;
+        if (setmeal != null) {
+            //把json格式字符串转成List返回
+            setmealList = JSON.parseObject(setmeal, List.class);
+        } else {
+            //没有,调用service层查,存到redis,再返回
+          setmealList = setmealService.findAll();
+            //将list转成json格式串存到redis
+            jedis.set("setmealList", JSON.toJSONString(setmealList));
+        }
         // 前端需要显示图片，要拼接图片的完整路径 java8 stream流操作
         setmealList.forEach(s -> s.setImg(QiNiuUtils.DOMAIN+s.getImg()));
         //for (Setmeal s : setmealList) {
@@ -47,14 +60,25 @@ public class SetmealMobileController {
      * 套餐详情 
      */
     @GetMapping("/findDetailById")
-    public Result findDetailById(int id){
+    public Result findDetailById(int id) {
+        //从工具类里获得jedis
+        Jedis jedis = JedisUtils.getConn();
+        //先从redis里获取数据(存储json格式串到redis),redis里没有在从Mysql里查
+        String setMealMobile_id = jedis.get("setMealMobile_" + id);
+        Setmeal setmeal = null;
+        if (setMealMobile_id != null) {
+            //把json格式字符串转成List返回
+            setmeal = JSON.parseObject(setMealMobile_id, Setmeal.class);
+        } else {
+            //没有,调用Service层查,存到redis,再返回
+             setmeal = setmealService.findDetailById(id);
+            //将list转成json格式串存到redis
+        }
         // 调用服务查询
-        Setmeal s = setmealService.findDetailById(id);
         // 图片的完整路径
-        s.setImg(QiNiuUtils.DOMAIN+s.getImg());
-        return new Result(true, MessageConstant.QUERY_SETMEAL_SUCCESS,s);
+        setmeal.setImg(QiNiuUtils.DOMAIN + setmeal.getImg());
+        return new Result(true, MessageConstant.QUERY_SETMEAL_SUCCESS, setmeal);
     }
-
     /**
      * 套餐详情
      */
